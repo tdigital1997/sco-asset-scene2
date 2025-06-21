@@ -19,143 +19,117 @@
 <body>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r148/three.min.js"></script>
   <script>
-    // Initialize Three.js
-    let scene = new THREE.Scene();
-    let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    let renderer = new THREE.WebGLRenderer({ antialias: true });
+    // Scene setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.shadowMap.enabled = true; // Enable shadows
+    renderer.shadowMap.enabled = true;
     document.body.appendChild(renderer.domElement);
 
-    // Improved cave with texture and roughness
-    const caveGeometry = new THREE.SphereGeometry(30, 64, 64);
-    const caveMaterial = new THREE.MeshStandardMaterial({ 
-      color: 0x222244, 
+    // Cave geometry (dark sphere from inside)
+    const caveGeometry = new THREE.SphereGeometry(40, 64, 64);
+    const caveMaterial = new THREE.MeshStandardMaterial({
+      color: 0x111122,
       side: THREE.BackSide,
-      roughness: 0.7,
-      metalness: 0.1
+      roughness: 0.5,
+      metalness: 0.3,
+      emissive: 0x0a0a22,
+      emissiveIntensity: 0.2
     });
     const cave = new THREE.Mesh(caveGeometry, caveMaterial);
     scene.add(cave);
 
-    // Add cave details (glyphs)
-    function createGlyphs() {
-      const glyphGeometry = new THREE.PlaneGeometry(2, 2);
-      const glyphMaterial = new THREE.MeshBasicMaterial({ 
-        color: 0x66ccff,
-        transparent: true,
-        opacity: 0.7,
-        side: THREE.DoubleSide
-      });
-      
-      // Create multiple glyphs in a circular pattern
-      for (let i = 0; i < 12; i++) {
-        const angle = (i / 12) * Math.PI * 2;
-        const radius = 25;
-        const x = Math.cos(angle) * radius;
-        const y = Math.sin(angle) * radius;
-        const z = -Math.random() * 20;
-        
-        const glyph = new THREE.Mesh(glyphGeometry, glyphMaterial);
-        glyph.position.set(x, y, z);
-        
-        // Make glyphs face the center
-        glyph.lookAt(0, 0, 0);
-        
-        // Add some random rotation
-        glyph.rotation.z += Math.random() * Math.PI;
-        
-        scene.add(glyph);
-      }
-    }
-    createGlyphs();
-
-    // Improved portal light with flickering effect
-    const portalLight = new THREE.PointLight(0x66ccff, 5, 50);
-    portalLight.position.set(0, 0, -10);
-    portalLight.castShadow = true;
-    scene.add(portalLight);
-
-    // Ambient shimmer
-    const ambientLight = new THREE.AmbientLight(0x334455);
-    scene.add(ambientLight);
-
-    // Improved floor light
-    const floorLight = new THREE.SpotLight(0x77ddff, 2, 100, Math.PI / 3);
-    floorLight.position.set(0, -10, 10);
-    floorLight.castShadow = true;
-    floorLight.shadow.mapSize.width = 1024;
-    floorLight.shadow.mapSize.height = 1024;
-    scene.add(floorLight);
-
-    // Enhanced portal disc with emissive material
+    // Portal ring
     const portalGeometry = new THREE.RingGeometry(3, 5, 64);
-    const portalMaterial = new THREE.MeshStandardMaterial({ 
+    const portalMaterial = new THREE.MeshStandardMaterial({
       color: 0x99ddff,
       emissive: 0x66ccff,
-      emissiveIntensity: 0.5,
+      emissiveIntensity: 1.0,
       side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.8
+      opacity: 0.9
     });
     const portal = new THREE.Mesh(portalGeometry, portalMaterial);
-    portal.position.z = -10;
+    portal.position.set(0, 0, -20);
     portal.rotation.x = Math.PI / 2;
     scene.add(portal);
 
-    // Add particles for atmosphere
-    function createParticles() {
-      const particlesGeometry = new THREE.BufferGeometry();
-      const particleCount = 500;
-      
-      const posArray = new Float32Array(particleCount * 3);
-      for(let i = 0; i < particleCount * 3; i++) {
-        posArray[i] = (Math.random() - 0.5) * 60;
-      }
-      
-      particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-      
-      const particlesMaterial = new THREE.PointsMaterial({
-        size: 0.1,
-        color: 0x88eeff,
-        transparent: true,
-        opacity: 0.6
-      });
-      
-      const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-      scene.add(particlesMesh);
+    // Portal light
+    const portalLight = new THREE.PointLight(0x66ccff, 5, 50);
+    portalLight.position.set(0, 0, -20);
+    portalLight.castShadow = true;
+    scene.add(portalLight);
+
+    // Ambient lighting
+    const ambientLight = new THREE.AmbientLight(0x333366, 0.8);
+    scene.add(ambientLight);
+
+    // Spot light from above
+    const topLight = new THREE.SpotLight(0xffffff, 1.2);
+    topLight.position.set(0, 20, 20);
+    topLight.castShadow = true;
+    scene.add(topLight);
+
+    // Northern lights-style particles
+    const particleCount = 500;
+    const particles = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount * 3; i++) {
+      positions[i] = (Math.random() - 0.5) * 60;
     }
-    createParticles();
+    particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-    // Camera setup with better position
-    camera.position.set(0, 5, 15);
-    camera.lookAt(portal.position);
+    const particleMaterial = new THREE.PointsMaterial({
+      size: 0.15,
+      color: 0x88eeff,
+      transparent: true,
+      opacity: 0.5
+    });
+    const particleSystem = new THREE.Points(particles, particleMaterial);
+    scene.add(particleSystem);
 
-    // Animation loop with improved effects
+    // Glyphs (12 planes arranged in circle)
+    const glyphGeo = new THREE.PlaneGeometry(2, 2);
+    const glyphMat = new THREE.MeshBasicMaterial({
+      color: 0x66ccff,
+      transparent: true,
+      opacity: 0.5,
+      side: THREE.DoubleSide
+    });
+    for (let i = 0; i < 12; i++) {
+      const angle = (i / 12) * Math.PI * 2;
+      const radius = 28;
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * radius;
+      const z = -10;
+
+      const glyph = new THREE.Mesh(glyphGeo, glyphMat);
+      glyph.position.set(x, y, z);
+      glyph.lookAt(0, 0, 0);
+      glyph.rotation.z += Math.random() * Math.PI;
+      scene.add(glyph);
+    }
+
+    // Camera
+    camera.position.set(0, 4, 15);
+    camera.lookAt(0, 0, -20);
+
+    // Animation loop
     function animate() {
       requestAnimationFrame(animate);
-      
-      // Rotate portal
-      portal.rotation.z += 0.005;
-      
-      // Flickering light effect
-      portalLight.intensity = 3 + Math.random() * 2;
-      
+      portal.rotation.z += 0.002;
+      portalLight.intensity = 4 + Math.sin(Date.now() * 0.005) * 0.5;
       renderer.render(scene, camera);
     }
-
     animate();
 
-    // Handle window resize
+    // Resize listener
     window.addEventListener("resize", () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
-
-    // Debugging helper - show axes
-    const axesHelper = new THREE.AxesHelper(5);
-    scene.add(axesHelper);
   </script>
 </body>
 </html>
