@@ -2,42 +2,72 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>SCO Cave Entry</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SCO Cave Ingress</title>
   <style>
-    html, body { margin: 0; overflow: hidden; background: #000; }
-    canvas { display: block; }
-    #overlay {
-      position: absolute;
-      bottom: 5%;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: 'Cinzel', serif;
-      color: #fff;
-      text-align: center;
-      z-index: 10;
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: black;
     }
-    #overlay h1 {
-      font-size: 2em;
-      color: #ffeac2;
-      text-shadow: 0 0 10px #fff;
-    }
-    #overlay button {
-      padding: 12px 24px;
-      font-size: 16px;
-      background: rgba(0, 0, 0, 0.6);
-      color: #66fcf1;
-      border: 2px solid #66fcf1;
-      border-radius: 8px;
-      cursor: pointer;
+    canvas {
+      display: block;
     }
   </style>
 </head>
 <body>
-  <div id="overlay">
-    <div id="glyphs">ᓂᔭᐣ ᐋᓯᐢᑲᓇᐣ ᑕᐃᐧᑲᓂᑲᐣ</div>
-    <h1 style="display:none;">SANTA CLAUS ORIGINS</h1>
-    <button onclick="enterCave()">ENTER</button>
-  </div>
-  <script type="module" src="scene.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r148/three.min.js"></script>
+  <script>
+    let scene = new THREE.Scene();
+    let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    let renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Cave Geometry (placeholder sphere with portal hole)
+    const caveGeometry = new THREE.SphereGeometry(30, 64, 64);
+    const caveMaterial = new THREE.MeshStandardMaterial({ color: 0x222244, side: THREE.BackSide });
+    const cave = new THREE.Mesh(caveGeometry, caveMaterial);
+    scene.add(cave);
+
+    // Light portal opening
+    const portalLight = new THREE.PointLight(0x66ccff, 3, 50);
+    portalLight.position.set(0, 0, -25);
+    scene.add(portalLight);
+
+    // Northern Lights effect - ambient light shimmer
+    const ambientLight = new THREE.AmbientLight(0x334455);
+    scene.add(ambientLight);
+
+    // Floor glow (simulated stairs base)
+    const floorLight = new THREE.SpotLight(0x77ddff, 1, 100, Math.PI / 3);
+    floorLight.position.set(0, -10, 10);
+    scene.add(floorLight);
+
+    // Add a glowing portal disc
+    const portalGeometry = new THREE.RingGeometry(3, 5, 64);
+    const portalMaterial = new THREE.MeshBasicMaterial({ color: 0x99ddff, side: THREE.DoubleSide });
+    const portal = new THREE.Mesh(portalGeometry, portalMaterial);
+    portal.position.z = -29;
+    portal.rotation.x = Math.PI / 2;
+    scene.add(portal);
+
+    camera.position.z = 10;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      portal.rotation.z += 0.002;
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
 </body>
 </html>
