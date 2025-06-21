@@ -19,116 +19,105 @@
 <body>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r148/three.min.js"></script>
   <script>
-    // Scene setup
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.shadowMap.enabled = true;
-    document.body.appendChild(renderer.domElement);
-
-    // Cave geometry (dark sphere from inside)
-    const caveGeometry = new THREE.SphereGeometry(40, 64, 64);
-    const caveMaterial = new THREE.MeshStandardMaterial({
-      color: 0x111122,
-      side: THREE.BackSide,
-      roughness: 0.5,
-      metalness: 0.3,
-      emissive: 0x0a0a22,
-      emissiveIntensity: 0.2
-    });
-    const cave = new THREE.Mesh(caveGeometry, caveMaterial);
-    scene.add(cave);
-
-    // Portal ring
-    const portalGeometry = new THREE.RingGeometry(3, 5, 64);
-    const portalMaterial = new THREE.MeshStandardMaterial({
-      color: 0x99ddff,
-      emissive: 0x66ccff,
-      emissiveIntensity: 1.0,
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: 0.9
-    });
-    const portal = new THREE.Mesh(portalGeometry, portalMaterial);
-    portal.position.set(0, 0, -20);
-    portal.rotation.x = Math.PI / 2;
-    scene.add(portal);
-
-    // Portal light
-    const portalLight = new THREE.PointLight(0x66ccff, 5, 50);
-    portalLight.position.set(0, 0, -20);
-    portalLight.castShadow = true;
-    scene.add(portalLight);
-
-    // Ambient lighting
-    const ambientLight = new THREE.AmbientLight(0x333366, 0.8);
-    scene.add(ambientLight);
-
-    // Spot light from above
-    const topLight = new THREE.SpotLight(0xffffff, 1.2);
-    topLight.position.set(0, 20, 20);
-    topLight.castShadow = true;
-    scene.add(topLight);
-
-    // Northern lights-style particles
-    const particleCount = 500;
-    const particles = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
-    for (let i = 0; i < particleCount * 3; i++) {
-      positions[i] = (Math.random() - 0.5) * 60;
-    }
-    particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-    const particleMaterial = new THREE.PointsMaterial({
-      size: 0.15,
-      color: 0x88eeff,
-      transparent: true,
-      opacity: 0.5
-    });
-    const particleSystem = new THREE.Points(particles, particleMaterial);
-    scene.add(particleSystem);
-
-    // Glyphs (12 planes arranged in circle)
-    const glyphGeo = new THREE.PlaneGeometry(2, 2);
-    const glyphMat = new THREE.MeshBasicMaterial({
-      color: 0x66ccff,
-      transparent: true,
-      opacity: 0.5,
-      side: THREE.DoubleSide
-    });
-    for (let i = 0; i < 12; i++) {
-      const angle = (i / 12) * Math.PI * 2;
-      const radius = 28;
-      const x = Math.cos(angle) * radius;
-      const y = Math.sin(angle) * radius;
-      const z = -10;
-
-      const glyph = new THREE.Mesh(glyphGeo, glyphMat);
-      glyph.position.set(x, y, z);
-      glyph.lookAt(0, 0, 0);
-      glyph.rotation.z += Math.random() * Math.PI;
-      scene.add(glyph);
-    }
-
-    // Camera
-    camera.position.set(0, 4, 15);
-    camera.lookAt(0, 0, -20);
-
-    // Animation loop
-    function animate() {
-      requestAnimationFrame(animate);
-      portal.rotation.z += 0.002;
-      portalLight.intensity = 4 + Math.sin(Date.now() * 0.005) * 0.5;
-      renderer.render(scene, camera);
-    }
-    animate();
-
-    // Resize listener
-    window.addEventListener("resize", () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
+    window.addEventListener("DOMContentLoaded", () => {
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.shadowMap.enabled = true;
+      document.body.appendChild(renderer.domElement);
+
+      const caveGeometry = new THREE.SphereGeometry(40, 64, 64);
+      const caveMaterial = new THREE.MeshStandardMaterial({
+        color: 0x111122,
+        side: THREE.BackSide,
+        roughness: 0.5,
+        metalness: 0.3,
+        emissive: 0x0a0a22,
+        emissiveIntensity: 0.2
+      });
+      const cave = new THREE.Mesh(caveGeometry, caveMaterial);
+      scene.add(cave);
+
+      const portalGeometry = new THREE.RingGeometry(3, 5, 64);
+      const portalMaterial = new THREE.MeshStandardMaterial({
+        color: 0x99ddff,
+        emissive: 0x66ccff,
+        emissiveIntensity: 1.0,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.9
+      });
+      const portal = new THREE.Mesh(portalGeometry, portalMaterial);
+      portal.position.set(0, 0, -20);
+      portal.rotation.x = Math.PI / 2;
+      scene.add(portal);
+
+      const portalLight = new THREE.PointLight(0x66ccff, 5, 50);
+      portalLight.position.set(0, 0, -20);
+      portalLight.castShadow = true;
+      scene.add(portalLight);
+
+      const ambientLight = new THREE.AmbientLight(0x333366, 0.8);
+      scene.add(ambientLight);
+
+      const topLight = new THREE.SpotLight(0xffffff, 1.2);
+      topLight.position.set(0, 20, 20);
+      topLight.castShadow = true;
+      scene.add(topLight);
+
+      const particleCount = 500;
+      const particles = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+      for (let i = 0; i < particleCount * 3; i++) {
+        positions[i] = (Math.random() - 0.5) * 60;
+      }
+      particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const particleMaterial = new THREE.PointsMaterial({
+        size: 0.15,
+        color: 0x88eeff,
+        transparent: true,
+        opacity: 0.5
+      });
+      const particleSystem = new THREE.Points(particles, particleMaterial);
+      scene.add(particleSystem);
+
+      const glyphGeo = new THREE.PlaneGeometry(2, 2);
+      const glyphMat = new THREE.MeshBasicMaterial({
+        color: 0x66ccff,
+        transparent: true,
+        opacity: 0.5,
+        side: THREE.DoubleSide
+      });
+      for (let i = 0; i < 12; i++) {
+        const angle = (i / 12) * Math.PI * 2;
+        const radius = 28;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
+        const z = -10;
+        const glyph = new THREE.Mesh(glyphGeo, glyphMat);
+        glyph.position.set(x, y, z);
+        glyph.lookAt(0, 0, 0);
+        glyph.rotation.z += Math.random() * Math.PI;
+        scene.add(glyph);
+      }
+
+      camera.position.set(0, 4, 15);
+      camera.lookAt(0, 0, -20);
+
+      function animate() {
+        requestAnimationFrame(animate);
+        portal.rotation.z += 0.002;
+        portalLight.intensity = 4 + Math.sin(Date.now() * 0.005) * 0.5;
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
     });
   </script>
 </body>
