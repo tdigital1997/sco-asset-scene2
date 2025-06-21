@@ -2,123 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SCO Cave Ingress</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SCO Scene 2 - Ice Cave</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       overflow: hidden;
-      background: black;
+      background: radial-gradient(ellipse at bottom, #000010 0%, #000000 100%);
+      height: 100%;
     }
     canvas {
       display: block;
     }
+    #fadeOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: black;
+      opacity: 1;
+      transition: opacity 2s ease-in-out;
+      z-index: 10;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r148/three.min.js"></script>
-  <script>
-    window.addEventListener("DOMContentLoaded", () => {
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      const renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.shadowMap.enabled = true;
-      document.body.appendChild(renderer.domElement);
+  <div id="fadeOverlay"></div>
+  <canvas id="canvas"></canvas>
 
-      const caveGeometry = new THREE.SphereGeometry(40, 64, 64);
-      const caveMaterial = new THREE.MeshStandardMaterial({
-        color: 0x111122,
-        side: THREE.BackSide,
-        roughness: 0.5,
-        metalness: 0.3,
-        emissive: 0x0a0a22,
-        emissiveIntensity: 0.2
-      });
-      const cave = new THREE.Mesh(caveGeometry, caveMaterial);
-      scene.add(cave);
-
-      const portalGeometry = new THREE.RingGeometry(3, 5, 64);
-      const portalMaterial = new THREE.MeshStandardMaterial({
-        color: 0x99ddff,
-        emissive: 0x66ccff,
-        emissiveIntensity: 1.0,
-        side: THREE.DoubleSide,
-        transparent: true,
-        opacity: 0.9
-      });
-      const portal = new THREE.Mesh(portalGeometry, portalMaterial);
-      portal.position.set(0, 0, -20);
-      portal.rotation.x = Math.PI / 2;
-      scene.add(portal);
-
-      const portalLight = new THREE.PointLight(0x66ccff, 5, 50);
-      portalLight.position.set(0, 0, -20);
-      portalLight.castShadow = true;
-      scene.add(portalLight);
-
-      const ambientLight = new THREE.AmbientLight(0x333366, 0.8);
-      scene.add(ambientLight);
-
-      const topLight = new THREE.SpotLight(0xffffff, 1.2);
-      topLight.position.set(0, 20, 20);
-      topLight.castShadow = true;
-      scene.add(topLight);
-
-      const particleCount = 500;
-      const particles = new THREE.BufferGeometry();
-      const positions = new Float32Array(particleCount * 3);
-      for (let i = 0; i < particleCount * 3; i++) {
-        positions[i] = (Math.random() - 0.5) * 60;
-      }
-      particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      const particleMaterial = new THREE.PointsMaterial({
-        size: 0.15,
-        color: 0x88eeff,
-        transparent: true,
-        opacity: 0.5
-      });
-      const particleSystem = new THREE.Points(particles, particleMaterial);
-      scene.add(particleSystem);
-
-      const glyphGeo = new THREE.PlaneGeometry(2, 2);
-      const glyphMat = new THREE.MeshBasicMaterial({
-        color: 0x66ccff,
-        transparent: true,
-        opacity: 0.5,
-        side: THREE.DoubleSide
-      });
-      for (let i = 0; i < 12; i++) {
-        const angle = (i / 12) * Math.PI * 2;
-        const radius = 28;
-        const x = Math.cos(angle) * radius;
-        const y = Math.sin(angle) * radius;
-        const z = -10;
-        const glyph = new THREE.Mesh(glyphGeo, glyphMat);
-        glyph.position.set(x, y, z);
-        glyph.lookAt(0, 0, 0);
-        glyph.rotation.z += Math.random() * Math.PI;
-        scene.add(glyph);
-      }
-
-      camera.position.set(0, 4, 15);
-      camera.lookAt(0, 0, -20);
-
-      function animate() {
-        requestAnimationFrame(animate);
-        portal.rotation.z += 0.002;
-        portalLight.intensity = 4 + Math.sin(Date.now() * 0.005) * 0.5;
-        renderer.render(scene, camera);
-      }
-      animate();
-
-      window.addEventListener("resize", () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      });
-    });
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
