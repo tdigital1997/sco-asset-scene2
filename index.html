@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SCO Cave Entry</title>
+  <style>
+    html, body { margin: 0; overflow: hidden; background: #000; }
+    canvas { display: block; }
+    #overlay {
+      position: absolute;
+      bottom: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Cinzel', serif;
+      color: #fff;
+      text-align: center;
+      z-index: 10;
+    }
+    #overlay h1 {
+      font-size: 2em;
+      color: #ffeac2;
+      text-shadow: 0 0 10px #fff;
+    }
+    #overlay button {
+      padding: 12px 24px;
+      font-size: 16px;
+      background: rgba(0, 0, 0, 0.6);
+      color: #66fcf1;
+      border: 2px solid #66fcf1;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="overlay">
+    <div id="glyphs">ᓂᔭᐣ ᐋᓯᐢᑲᓇᐣ ᑕᐃᐧᑲᓂᑲᐣ</div>
+    <h1 style="display:none;">SANTA CLAUS ORIGINS</h1>
+    <button onclick="enterCave()">ENTER</button>
+  </div>
+  <script type="module" src="scene.js"></script>
+</body>
+</html>
